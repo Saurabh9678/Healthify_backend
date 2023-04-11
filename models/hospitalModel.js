@@ -3,37 +3,29 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const validator = require("validator");
 
-const userSchema = new mongoose.Schema({
+const hospitalSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, "Please Enter your name"],
+    required: [true, "Please enter the hospital name"],
   },
   email: {
     type: String,
     unique:true,
-    required: [true, "Please Enter your email"],
+    required: [true, "Please enter email"],
     validate: [validator.isEmail, "Please Enter a valid Email"],
   },
   password: {
     type: String,
-    required: [true, "Please Enter your password"],
+    required: [true, "Please enter password"],
     select: false,
   },
-  dob:{
-    type:String,
-    default:"NA"
-  },
-  blood_group: {
+  gst_in: {
     type: String,
-    default: "NA"
+    required: [true, "Please provide GST IN number"],
+    select: false,
   },
-  phone_number: {
-    type: String,
-    default: "0"
-  },
-  gender: {
-    type: String,
-    default:"NA"
+  contact_number: {
+    type: Array,
   },
   address: {
     state: {
@@ -46,28 +38,35 @@ const userSchema = new mongoose.Schema({
       type: String,
     },
     pin_code: {
-      type: String,
+      type: Number,
     },
   },
-  prescriptions: [
+  departments: [
     {
-      prescription: {
-        type: mongoose.Schema.ObjectId,
-        ref: "Prescription",
+      dept_name: {
+        type: String,
       },
+      doctors: [
+        {
+          doct_id: {
+            type: mongoose.Schema.ObjectId,
+            ref: "Doctor",
+          },
+        },
+      ],
     },
   ],
-  appointments: [
+  new_appoinments: [
     {
-      acpt_appointment: {
+      apt_id: {
         type: mongoose.Schema.ObjectId,
         ref: "Appointment",
       },
     },
   ],
-  req_appointments: [
+  accepted_appointments: [
     {
-      req_appt: {
+      acpt_apt_id: {
         type: mongoose.Schema.ObjectId,
         ref: "Appointment",
       },
@@ -75,7 +74,7 @@ const userSchema = new mongoose.Schema({
   ],
 });
 
-userSchema.pre("save", async function (next) {
+hospitalSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     next();
   }
@@ -84,16 +83,15 @@ userSchema.pre("save", async function (next) {
 });
 
 // JWT TOKEN
-userSchema.methods.getJWTToken = function () {
+hospitalSchema.methods.getJWTToken = function () {
   return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE,
   });
 };
 
 // Compare Password
-userSchema.methods.comparePassword = async function (password) {
+hospitalSchema.methods.comparePassword = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
 
-
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model("Hospital", hospitalSchema);
