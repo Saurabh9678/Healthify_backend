@@ -1,7 +1,7 @@
 # Healthify_backend
 Healthify Backend is the server-side component of the Healthify app, a comprehensive healthcare solution that consists of two parts: one for the user and one for hospital management. The backend is responsible for handling user authentication, managing appointments and prescriptions, and providing hospital management with access to patient information.
 
-#About The App
+# About The App
 The HealthiFy App is a comprehensive healthcare solution that consists of two parts: one for the user and one for hospital management. The user part of the app is designed to help people find nearby hospitals and doctors in a new city. Users can search for hospitals based on their location, city, or hospital name, and book an appointment at the hospital of their choice.
 
 Once an appointment request is made, the hospital management app receives an update and can either accept or reject the request. If the request is accepted, a doctor is assigned to the user, who can then provide a prescription for the user's condition.
@@ -35,7 +35,7 @@ Before running the application, make sure to set the following environment varia
 Base URL: `DOMAIN-NAME/api/v1`  
 The Healthify Backend provides the following API endpoints:  
 
-#USER Endpoints
+# USER Endpoints
 Common prefix: `/user`  
 
 `POST /register`: Register the user.  
@@ -47,7 +47,7 @@ Common prefix: `/user`
 `GET /searchHospital` : Gets the hospitals according to the querry.  
 
 
-#HOSPITAL Endpoints
+# HOSPITAL Endpoints
 Common prefix: `/hospital`  
 
 `POST /register`: Register the hospital.  
