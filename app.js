@@ -11,7 +11,7 @@ const hospitalRoutes = require("./routes/hospitalRoutes.js");
 const doctorRoutes = require("./routes/doctorRoutes.js");
 const appointmentRoutes = require("./routes/appointmentRoutes.js")
 
-
+//Routes
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/hospital", hospitalRoutes);
 app.use("/api/v1/doctor", doctorRoutes);
