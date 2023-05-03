@@ -27,6 +27,14 @@ const hospitalSchema = new mongoose.Schema({
   contact_number: {
     type: Array,
   },
+  longitude:{
+    type:Number,
+    required:true
+  },
+  latitude:{
+    type: Number,
+    required: true
+  },
   address: {
     state: {
       type: String,
@@ -38,7 +46,7 @@ const hospitalSchema = new mongoose.Schema({
       type: String,
     },
     pin_code: {
-      type: Number,
+      type: String,
     },
   },
   departments: [

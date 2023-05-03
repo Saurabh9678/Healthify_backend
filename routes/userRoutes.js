@@ -9,6 +9,9 @@ const {
   updateUserDetail,
 } = require("../controllers/userController");
 
+
+const {isAuthenticatedUser} = require("../middleware/auth")
+
 const { reqAppointment } = require("../controllers/appointmentController");
 const { searchedHospital } = require("../controllers/hospitalController");
 const { getPrescription } = require("../controllers/prescriptionController");
@@ -28,7 +31,7 @@ router.route("/details/:u_id").get(getUserDetail).put(updateUserDetail);
 router.route("/reqApt").post(reqAppointment);
 
 //from hospital controller
-router.route("/searchHospital").get(searchedHospital);
+router.route("/searchHospital").get(isAuthenticatedUser,searchedHospital);
 
 //postman route only for testing
 router.route("/postman/:u_id").get(getUserDetailsPostman);

@@ -4,15 +4,18 @@ const Hospital = require("../models/hospitalModel");
 const sendToken = require("../utils/jwtToken");
 const User = require("../models/userModel");
 
+
 // Register a hospital
 exports.registerHospital = catchAsyncError(async (req, res, next) => {
-  const { name, email, password, gst_in } = req.body;
+  const { name, email, password, gst_in, longitude, latitude } = req.body;
 
   const hospital = await Hospital.create({
     name,
     email,
     password,
     gst_in,
+    longitude,
+    latitude,
   });
 
   sendToken(hospital, 201, res);
@@ -106,7 +109,7 @@ exports.updateHostpitalDetail = catchAsyncError(async (req, res, next) => {
   res.status(200).json({
     success: true,
     hospital,
-    message: "Success",
+    message: "Updated",
     error: "",
   });
 });
@@ -148,30 +151,49 @@ exports.getAllNewAppointments = catchAsyncError(async (req, res, next) => {
 
 // Search for Hospital Details
 exports.searchedHospital = catchAsyncError(async (req, res, next) => {
-  // Get the city from the front-end
-  const city = req.query.city;
-  const hpt = req.query.hospital;
-  let hospital;
-  if (city) {
-    hospital = await Hospital.find({ "address.city": city });
-  } else if (hpt) {
-    hospital = await Hospital.find({ name: hpt });
-  }
+  // Get the latitude and longitude from the request body
+  const { latitude, longitude } = req.body;
 
-  if (hospital.length === 0) {
-    return next(new ErrorHandler("No hospitals found", 400));
-  }
+  // Calculate the difference between the latitude and longitude coordinates for 20km  square area
+  const distanceDiff = 0.20143519329187;
 
-  const resHospital = hospital.map(({ _id, name, address }) => ({
-    _id,
-    name,
-    address,
-  }));
+  // Calculate the left, right, top, and bottom coordinates of the square area for the search
+  const leftCord = longitude - distanceDiff,
+    rightCord = longitude + distanceDiff,
+    topCord = latitude + distanceDiff,
+    bottomCord = latitude - distanceDiff;
 
+  // Query the hospital collection for hospitals within the specified latitude and longitude range
+  const hospital = await Hospital.find(
+    {
+      $and: [
+        {
+          $and: [
+            { longitude: { $gt: leftCord } },
+            { longitude: { $lt: rightCord } },
+          ],
+        },
+        {
+          $and: [
+            { latitude: { $gt: bottomCord } },
+            { latitude: { $lt: topCord } },
+          ],
+        },
+      ],
+    },
+    {
+      _id: 1,
+      name: 1,
+      address: 1,
+    }
+  );
+
+  // Return the list of hospitals as JSON response
   res.status(200).json({
     success: true,
-    resHospital,
+    hospital,
     message: "Success",
     error: "",
   });
 });
+
