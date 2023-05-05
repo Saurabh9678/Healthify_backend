@@ -4,7 +4,7 @@ const Hospital = require("../models/hospitalModel");
 const sendToken = require("../utils/jwtToken");
 const User = require("../models/userModel");
 
-
+// Hospsital Controller
 // Register a hospital
 exports.registerHospital = catchAsyncError(async (req, res, next) => {
   const { name, email, password, gst_in, longitude, latitude } = req.body;
@@ -60,22 +60,7 @@ exports.logoutHospital = catchAsyncError(async (req, res, next) => {
   });
 });
 
-//Get hospital details --> Postman
-exports.getHospitalDetailPostman = catchAsyncError(async (req, res, next) => {
-  const hospital = await Hospital.findById(req.params.h_id);
-  if (!hospital) {
-    return next(new ErrorHandler("No hospital found", 400));
-  }
-
-  res.status(200).json({
-    success: true,
-    hospital: hospital,
-    message: "Success",
-    error: "",
-  });
-});
-
-// Get hospital details --> User
+//GET hospital details ---> Profile
 exports.getHospitalDetail = catchAsyncError(async (req, res, next) => {
   const hospital = await Hospital.findById(req.params.h_id);
   if (!hospital) {
@@ -88,6 +73,7 @@ exports.getHospitalDetail = catchAsyncError(async (req, res, next) => {
       id: hospital._id,
       name: hospital.name,
       email: hospital.email,
+      gst_in: hospital.gst_in,
       contact_number: hospital.contact_number,
       address: hospital.address,
       departments: hospital.departments,
@@ -98,7 +84,6 @@ exports.getHospitalDetail = catchAsyncError(async (req, res, next) => {
 });
 
 // Update Hospital Profile
-
 exports.updateHostpitalDetail = catchAsyncError(async (req, res, next) => {
   const hospital = await Hospital.findByIdAndUpdate(req.params.h_id, req.body, {
     new: true,
@@ -149,6 +134,29 @@ exports.getAllNewAppointments = catchAsyncError(async (req, res, next) => {
   });
 });
 
+// FOR USER CONTROLLERS
+// Get hospital details
+exports.getHospitalDetailForUser = catchAsyncError(async (req, res, next) => {
+  const hospital = await Hospital.findById(req.params.h_id);
+  if (!hospital) {
+    return next(new ErrorHandler("No hospital found", 400));
+  }
+
+  res.status(200).json({
+    success: true,
+    hospital: {
+      id: hospital._id,
+      name: hospital.name,
+      email: hospital.email,
+      contact_number: hospital.contact_number,
+      address: hospital.address,
+      departments: hospital.departments,
+    },
+    message: "Success",
+    eroor: "",
+  });
+});
+
 // Search for Hospital Details
 exports.searchedHospital = catchAsyncError(async (req, res, next) => {
   // Get the latitude and longitude from the request body
@@ -164,7 +172,7 @@ exports.searchedHospital = catchAsyncError(async (req, res, next) => {
     bottomCord = latitude - distanceDiff;
 
   // Query the hospital collection for hospitals within the specified latitude and longitude range
-  const hospital = await Hospital.find(
+  const hospitals = await Hospital.find(
     {
       $and: [
         {
@@ -191,9 +199,48 @@ exports.searchedHospital = catchAsyncError(async (req, res, next) => {
   // Return the list of hospitals as JSON response
   res.status(200).json({
     success: true,
-    hospital,
+    hospitals,
     message: "Success",
     error: "",
   });
 });
 
+// FOR POSTMAN TEST CONTROLLERS
+// Get Single hospital details
+exports.getHospitalDetailPostman = catchAsyncError(async (req, res, next) => {
+  const hospital = await Hospital.findById(req.params.h_id);
+  if (!hospital) {
+    return next(new ErrorHandler("No hospital found", 404));
+  }
+
+  res.status(200).json({
+    success: true,
+    hospital: hospital,
+    message: "Success",
+    error: "",
+  });
+});
+
+//Get all hospital details
+exports.getAllHospitalDetailsPostman = catchAsyncError(
+  async (req, res, next) => {
+    const hospitals = await Hospital.find(
+      {},
+      {
+        _id: 1,
+        name: 1
+      }
+    );
+    if (!hospitals) {
+      return next(new ErrorHandler("No Hospitals available", 404));
+    }
+
+    res.status(200).json({
+      success: "true",
+      hospital_count: hospitals.length,
+      hospitals,
+      message: "Successful",
+      error: "",
+    });
+  }
+);

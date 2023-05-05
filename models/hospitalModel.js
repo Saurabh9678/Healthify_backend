@@ -22,7 +22,6 @@ const hospitalSchema = new mongoose.Schema({
   gst_in: {
     type: String,
     required: [true, "Please provide GST IN number"],
-    select: false,
   },
   contact_number: {
     type: Array,

@@ -11,7 +11,7 @@ exports.reqAppointment = catchAsyncError(async (req, res, next) => {
   const { h_id, u_id, appointment_date } = req.body;
   const hospital_id = new mongoose.Types.ObjectId(h_id);
   const user_id = new mongoose.Types.ObjectId(u_id);
-
+  
   const appointment = await Appointment.create({
     hospital_id,
     user_id,

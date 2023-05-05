@@ -55,11 +55,11 @@ exports.logoutUser = catchAsyncError(async (req, res, next) => {
   });
 });
 
-//Get user Detail
+//Get user Detail --Profile
 exports.getUserDetail = catchAsyncError(async (req, res, next) => {
   const user = await User.findById(req.params.u_id);
   if (!user) {
-    return next(new ErrorHandler("Please provide a valid user Id", 400));
+    return next(new ErrorHandler("No user found(Invalid userID)", 404));
   }
 
   res.status(200).json({
@@ -79,23 +79,7 @@ exports.getUserDetail = catchAsyncError(async (req, res, next) => {
   });
 });
 
-//get user detail --> for postman
-exports.getUserDetailsPostman = catchAsyncError(async (req, res, next) => {
-  const user = await User.findById(req.params.u_id);
-  if (!user) {
-    return next(new ErrorHandler("Please provide a valid user Id", 400));
-  }
-
-  res.status(200).json({
-    success: true,
-    user: user,
-    message: "Success",
-    error: "",
-  });
-});
-
 //update profile
-
 exports.updateUserDetail = catchAsyncError(async (req, res, next) => {
   const user = await User.findByIdAndUpdate(req.params.u_id, req.body, {
     new: true,
@@ -115,6 +99,44 @@ exports.updateUserDetail = catchAsyncError(async (req, res, next) => {
       phone_number: user.phone_number,
     },
     message: "Updated",
+    error: "",
+  });
+});
+
+// FOR Postman
+//get user detail
+exports.getUserDetailsPostman = catchAsyncError(async (req, res, next) => {
+  const user = await User.findById(req.params.u_id);
+  if (!user) {
+    return next(new ErrorHandler("Please provide a valid user Id", 404));
+  }
+
+  res.status(200).json({
+    success: true,
+    user: user,
+    message: "Success",
+    error: "",
+  });
+});
+
+//Get all users
+exports.getAllUsersDetailsPostman = catchAsyncError(async (req, res, next) => {
+  const users = await User.find(
+    {},
+    {
+      _id: 1,
+      name: 1,
+    }
+  );
+  if (!users) {
+    return next(new ErrorHandler("No users found", 404));
+  }
+
+  res.status(200).json({
+    success: true,
+    users_count: users.length,
+    users,
+    message: "Successful",
     error: "",
   });
 });
