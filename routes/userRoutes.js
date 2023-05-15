@@ -17,6 +17,7 @@ const { reqAppointment } = require("../controllers/appointmentController");
 const {
   searchedHospital,
   getHospitalDetailForUser,
+  nearbyHospital,
 } = require("../controllers/hospitalController");
 
 const { getPrescription } = require("../controllers/prescriptionController");
@@ -39,6 +40,7 @@ router.route("/reqApt").post(isAuthenticatedUser, reqAppointment);
 
 //from hospital controller
 router.route("/searchHospital").get(isAuthenticatedUser, searchedHospital);
+router.route("/nearbyHospital").get(isAuthenticatedUser,nearbyHospital);
 router
   .route("/hospital-detail/:h_id")
   .get(isAuthenticatedUser, getHospitalDetailForUser);

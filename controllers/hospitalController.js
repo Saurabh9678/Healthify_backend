@@ -159,6 +159,41 @@ exports.getHospitalDetailForUser = catchAsyncError(async (req, res, next) => {
 
 // Search for Hospital Details
 exports.searchedHospital = catchAsyncError(async (req, res, next) => {
+  const { city, hospital_name } = req.headers;
+  let hospital;
+  if (city) {
+    hospital = await Hospital.find(
+      { "address.city": city },
+      {
+        _id: 1,
+        name: 1,
+        address: 1,
+      }
+    );
+  } else {
+    hospital = await Hospital.find(
+      { name: hospital_name },
+      {
+        _id: 1,
+        name: 1,
+        address: 1,
+      }
+    );
+  }
+
+  if (hospital.length === 0) {
+    return next(new ErrorHandler("No hospital found", 404));
+  } else {
+    res.status(200).json({
+      success: true,
+      hospitals: hospital,
+      message: "Hospital found success",
+      error: "",
+    });
+  }
+});
+
+exports.nearbyHospital = catchAsyncError(async (req, res, next) => {
   // Get the latitude and longitude from the request body
   const { latitude, longitude } = req.body;
 
@@ -205,6 +240,9 @@ exports.searchedHospital = catchAsyncError(async (req, res, next) => {
   });
 });
 
+
+
+
 // FOR POSTMAN TEST CONTROLLERS
 // Get Single hospital details
 exports.getHospitalDetailPostman = catchAsyncError(async (req, res, next) => {
@@ -228,7 +266,7 @@ exports.getAllHospitalDetailsPostman = catchAsyncError(
       {},
       {
         _id: 1,
-        name: 1
+        name: 1,
       }
     );
     if (!hospitals) {
