@@ -11,7 +11,7 @@ exports.reqAppointment = catchAsyncError(async (req, res, next) => {
   const { h_id, u_id, appointment_date } = req.body;
   const hospital_id = new mongoose.Types.ObjectId(h_id);
   const user_id = new mongoose.Types.ObjectId(u_id);
-  
+
   const appointment = await Appointment.create({
     hospital_id,
     user_id,
@@ -72,12 +72,12 @@ exports.resToAppointment = catchAsyncError(async (req, res, next) => {
     hospital.new_appoinments = new_appoinments;
 
     // Add the accepted appointment's id to the doctor's model
-    const doctor = await Doctor.findById(appointment.doctor_id);
-    doctor.allAppointments.push({ appointment: appointment._id });
+    // const doctor = await Doctor.findById(appointment.doctor_id);
+    // doctor.allAppointments.push({ appointment: appointment._id });
 
     await user.save({ validateBeforeSave: false });
     await hospital.save({ validateBeforeSave: false });
-    await doctor.save({ validateBeforeSave: false });
+    //await doctor.save({ validateBeforeSave: false });
 
     res.status(200).json({
       success: true,

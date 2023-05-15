@@ -15,9 +15,11 @@ const doctorSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
+    select: false
   },
   specialist: {
     type: String,
+    default: "General"
   },
   allAppointments: [
     {
@@ -29,6 +31,7 @@ const doctorSchema = new mongoose.Schema({
   ],
   license_id: {
     type: String,
+    unique: true
   },
   phone_number: {
     type: Number,

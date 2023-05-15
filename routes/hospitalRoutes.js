@@ -11,9 +11,11 @@ const {
   getAllHospitalDetailsPostman,
 } = require("../controllers/hospitalController");
 
-const { isAuthenticatedUser } = require("../middleware/auth");
+const {addDoctorByHospital} = require("../controllers/doctorController")
 
 const { resToAppointment } = require("../controllers/appointmentController");
+
+const { isAuthenticatedUser } = require("../middleware/auth");
 
 const router = express.Router();
 
@@ -30,9 +32,19 @@ router
 
 router.route("/all-appointment/:h_id").get(getAllNewAppointments);
 
-//for user routes
+router.route("/add-doctor/:h_id").post(addDoctorByHospital)
+
+
+
+
+
 //Appointment controller
 router.route("/resApt/:apt_id").post(resToAppointment);
+
+
+
+
+
 
 // For Postman --> All Details
 router.route("/all-detail/:h_id/postman").get(getHospitalDetailPostman);
