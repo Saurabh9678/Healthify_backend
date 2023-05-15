@@ -159,7 +159,9 @@ exports.getHospitalDetailForUser = catchAsyncError(async (req, res, next) => {
 
 // Search for Hospital Details
 exports.searchedHospital = catchAsyncError(async (req, res, next) => {
-  const { city, hospital_name } = req.headers;
+  const { city, hospital_name } = req.query;
+
+  console.log(city);
   let hospital;
   if (city) {
     hospital = await Hospital.find(
@@ -195,7 +197,10 @@ exports.searchedHospital = catchAsyncError(async (req, res, next) => {
 
 exports.nearbyHospital = catchAsyncError(async (req, res, next) => {
   // Get the latitude and longitude from the request body
-  const { latitude, longitude } = req.body;
+  let { latitude, longitude } = req.query;
+
+  latitude = parseFloat(latitude);
+  longitude = parseFloat(longitude);
 
   // Calculate the difference between the latitude and longitude coordinates for 20km  square area
   const distanceDiff = 0.20143519329187;

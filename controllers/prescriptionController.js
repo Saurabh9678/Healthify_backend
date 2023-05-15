@@ -9,6 +9,8 @@ const Doctor = require("../models/doctorModel");
 
 const Hospital = require("../models/hospitalModel");
 
+
+
 // Add Prescription --> Doctor(POST)
 exports.addPrescription = catchAsyncError(async (req, res, next) => {
   const {
@@ -98,3 +100,25 @@ exports.updatePrescription = catchAsyncError(async (req, res, next) => {
     error: "",
   });
 });
+
+
+
+
+
+//POSTMAN
+exports.getAllPrescriptionDetails = catchAsyncError(async (req,res, next)=>{
+  const prescriptions = await Prescription.find();
+
+  if(prescriptions.length===0){
+    return next(new ErrorHandler("No Prescriptions available", 404))
+  }
+
+  res.status(200).json({
+    success: true,
+    prescriptions_count: prescriptions.length,
+    prescriptions,
+    message: "All prescriptions",
+    error: ""
+  })
+
+})
