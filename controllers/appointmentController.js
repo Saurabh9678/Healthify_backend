@@ -51,6 +51,7 @@ exports.resToAppointment = catchAsyncError(async (req, res, next) => {
     }
   );
 
+
   //if accepted
   if (status === "A") {
     //User
@@ -71,13 +72,13 @@ exports.resToAppointment = catchAsyncError(async (req, res, next) => {
     );
     hospital.new_appoinments = new_appoinments;
 
-    // Add the accepted appointment's id to the doctor's model
-    // const doctor = await Doctor.findById(appointment.doctor_id);
-    // doctor.allAppointments.push({ appointment: appointment._id });
+    //Add the accepted appointment's id to the doctor's model
+    const doctor = await Doctor.findById(appointment.doctor_id);
+    doctor.allAppointments.push({ appointment: appointment._id });
 
     await user.save({ validateBeforeSave: false });
     await hospital.save({ validateBeforeSave: false });
-    //await doctor.save({ validateBeforeSave: false });
+    await doctor.save({ validateBeforeSave: false });
 
     res.status(200).json({
       success: true,
