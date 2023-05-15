@@ -100,3 +100,43 @@ exports.addDoctorByHospital = catchAsyncError(async (req, res, next) => {
 
 
 });
+
+
+//POSTMAN
+//Get all users
+exports.getAllDoctorsDetailsPostman = catchAsyncError(async (req, res, next) => {
+  const doctors = await Doctor.find(
+    {},
+    {
+      _id: 1,
+      name: 1,
+    }
+  );
+  if (!doctors) {
+    return next(new ErrorHandler("No doctors found", 404));
+  }
+
+  res.status(200).json({
+    success: true,
+    doctors_count: doctors.length,
+    doctors,
+    message: "Successful",
+    error: "",
+  });
+});
+
+
+//get doctor detail
+exports.getDoctorDetailsPostman = catchAsyncError(async (req, res, next) => {
+  const doctor = await Doctor.findById(req.params.d_id);
+  if (!doctor) {
+    return next(new ErrorHandler("Please provide a valid user Id", 404));
+  }
+
+  res.status(200).json({
+    success: true,
+    Doctor: doctor,
+    message: "Success",
+    error: "",
+  });
+});

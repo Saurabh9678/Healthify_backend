@@ -2,6 +2,8 @@ const express = require("express");
 const {
   loginDoctor,
   logoutDoctor,
+  getAllDoctorsDetailsPostman,
+  getDoctorDetailsPostman,
 } = require("../controllers/doctorController.js");
 
 // const { getAppointment } = require("../controllers/appointmentController.js");
@@ -21,9 +23,13 @@ router.route("/login").post(loginDoctor);
 router.route("/logout").get(logoutDoctor);
 
 
-// For testing appointment details
-// router.route("/:id").get(getAppointment)
 
 router.route("/add-prescription").post(addPrescription);
+
+
+//POSTMAN
+router.route("/all-doctor-details").get(getAllDoctorsDetailsPostman)
+router.route("/detail/:d_id").get(getDoctorDetailsPostman)
+
 
 module.exports = router;
