@@ -161,7 +161,6 @@ exports.getHospitalDetailForUser = catchAsyncError(async (req, res, next) => {
 exports.searchedHospital = catchAsyncError(async (req, res, next) => {
   const { city, hospital_name } = req.query;
 
-  console.log(city);
   let hospital;
   if (city) {
     hospital = await Hospital.find(
