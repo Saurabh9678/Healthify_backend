@@ -4,7 +4,6 @@ const Doctor = require("../models/doctorModel");
 const Hospital = require("../models/hospitalModel");
 const sendToken = require("../utils/jwtToken");
 
-
 // Login Doctor
 exports.loginDoctor = catchAsyncError(async (req, res, next) => {
   const { email, password } = req.body;
@@ -95,36 +94,62 @@ exports.addDoctorByHospital = catchAsyncError(async (req, res, next) => {
   res.status(200).json({
     status: true,
     message: "Doctor added",
-    error: ""
-  })
-
-
-});
-
-
-//POSTMAN
-//Get all users
-exports.getAllDoctorsDetailsPostman = catchAsyncError(async (req, res, next) => {
-  const doctors = await Doctor.find(
-    {},
-    {
-      _id: 1,
-      name: 1,
-    }
-  );
-  if (!doctors) {
-    return next(new ErrorHandler("No doctors found", 404));
-  }
-
-  res.status(200).json({
-    success: true,
-    doctors_count: doctors.length,
-    doctors,
-    message: "Successful",
     error: "",
   });
 });
+// Get all Doctor in the Hospital
+exports.getAllAvailableDoctor = catchAsyncError(async (req, res, next) => {
+  const { departments } = req.user;
 
+  if (departments.length === 0) {
+    res.status(200).json({
+      success: true,
+      message: "No doctors available",
+      error: "",
+    });
+  } else {
+    const doctorIds = departments.flatMap((department) =>
+      department.doctors.map((doctor) => doctor.doct_id)
+    );
+
+    const doctors = await Doctor.find({ _id: { $in: doctorIds } })
+      .select("name specialist")
+      .exec();
+
+    res.status(200).json({
+      success: true,
+      doctor_count: doctors.length,
+      doctors,
+      message: "Available doctors retrieved successfully",
+      error: "",
+    });
+  }
+});
+
+//POSTMAN
+//Get all doctors
+exports.getAllDoctorsDetailsPostman = catchAsyncError(
+  async (req, res, next) => {
+    const doctors = await Doctor.find(
+      {},
+      {
+        _id: 1,
+        name: 1,
+      }
+    );
+    if (!doctors) {
+      return next(new ErrorHandler("No doctors found", 404));
+    }
+
+    res.status(200).json({
+      success: true,
+      doctors_count: doctors.length,
+      doctors,
+      message: "Successful",
+      error: "",
+    });
+  }
+);
 
 //get doctor detail
 exports.getDoctorDetailsPostman = catchAsyncError(async (req, res, next) => {

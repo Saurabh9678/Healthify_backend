@@ -11,7 +11,10 @@ const {
   getAllHospitalDetailsPostman,
 } = require("../controllers/hospitalController");
 
-const { addDoctorByHospital } = require("../controllers/doctorController");
+const {
+  addDoctorByHospital,
+  getAllAvailableDoctor,
+} = require("../controllers/doctorController");
 
 const {
   resToAppointment,
@@ -40,6 +43,8 @@ router
 router
   .route("/add-doctor/:h_id")
   .post(isAuthenticatedHospital, addDoctorByHospital);
+
+router.route("/doctors").get(isAuthenticatedHospital, getAllAvailableDoctor);
 
 //Appointment controller
 router.route("/resApt/:apt_id").post(isAuthenticatedHospital, resToAppointment);
