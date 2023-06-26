@@ -224,19 +224,49 @@ exports.checkAppointment = catchAsyncError(async (req, res, next) => {
       success: true,
       appointment,
       message: "Appointment Exist",
-      error: ""
+      error: "",
     });
   } else {
     res.status(404).json({
       success: false,
       message: "no appointment for this user, Give appointment",
-      error: ""
-    })
+      error: "",
+    });
   }
 });
 
-
 // //Book appointment from hospital for the user
-// exports.bookAppointmentByHospital = catchAsyncError(async (req,res, next)=>{
+exports.bookAppointmentByHospital = catchAsyncError(async (req, res, next) => {
+  const { doctor_id, user_id, department, description } = req.body;
+  const status = "A",
+    hospital_id = req.user._id;
+  const appointment = await Appointment.create({
+    hospital_id,
+    user_id,
+    doctor_id,
+    department,
+    description,
+    status,
+  });
 
-// })
+  //User
+  const user = await User.findById(appointment.user_id);
+  user.appointments.push({ acpt_appointment: appointment._id });
+  //Hospital
+  const hospital = await Hospital.findById(appointment.hospital_id);
+  hospital.accepted_appointments.push({ acpt_apt_id: appointment._id });
+
+  //Add the accepted appointment's id to the doctor's model
+  const doctor = await Doctor.findById(appointment.doctor_id);
+  doctor.allAppointments.push({ appointment: appointment._id });
+
+  await user.save({ validateBeforeSave: false });
+  await hospital.save({ validateBeforeSave: false });
+  await doctor.save({ validateBeforeSave: false });
+
+  res.status(200).json({
+    success: true,
+    message: "Appointment Booked",
+    error: "",
+  });
+});

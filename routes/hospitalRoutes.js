@@ -21,6 +21,7 @@ const {
   getAllAcceptedAppointmentManagement,
   getAppointmentDetail,
   checkAppointment,
+  bookAppointmentByHospital,
 } = require("../controllers/appointmentController");
 
 const { isAuthenticatedHospital } = require("../middleware/auth");
@@ -59,6 +60,10 @@ router
   .get(isAuthenticatedHospital, getAppointmentDetail);
 
 router.route("/checkApt/:u_id").get(isAuthenticatedHospital, checkAppointment);
+
+router
+  .route("/bookApt")
+  .post(isAuthenticatedHospital, bookAppointmentByHospital);
 
 // For Postman --> All Details
 router.route("/all-detail/:h_id/postman").get(getHospitalDetailPostman);
