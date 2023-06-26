@@ -8,7 +8,7 @@ const mongoose = require("mongoose");
 
 //Make appointment --USER
 exports.reqAppointment = catchAsyncError(async (req, res, next) => {
-  const { h_id, u_id, appointment_date,description } = req.body;
+  const { h_id, u_id, appointment_date, description } = req.body;
   const hospital_id = new mongoose.Types.ObjectId(h_id);
   const user_id = new mongoose.Types.ObjectId(u_id);
 
@@ -16,7 +16,7 @@ exports.reqAppointment = catchAsyncError(async (req, res, next) => {
     hospital_id,
     user_id,
     appointment_date,
-    description
+    description,
   });
 
   //User
@@ -113,7 +113,6 @@ exports.resToAppointment = catchAsyncError(async (req, res, next) => {
 
       res.status(200).json({
         success: true,
-        appointment,
         message: "Appointment Accepted",
         error: "",
       });
@@ -154,8 +153,9 @@ exports.resToAppointment = catchAsyncError(async (req, res, next) => {
 
 exports.getAppointmentDetail = catchAsyncError(async (req, res, next) => {
   const appointment = await Appointment.findById(req.params.apt_id)
-    .populate("hospital_id", "_id name")
-    .populate("user_id", "_id name");
+    .populate("user_id", "name email dob blood_group phone_number gender")
+    .select("-hospital_id -__v")
+    .exec();
 
   res.status(200).json({
     success: true,
@@ -169,7 +169,6 @@ exports.getAppointmentDetail = catchAsyncError(async (req, res, next) => {
 
 exports.getAllAcceptedAppointmentManagement = catchAsyncError(
   async (req, res, next) => {
-
     const { accepted_appointments } = req.user;
 
     if (accepted_appointments.length === 0) {
@@ -197,3 +196,47 @@ exports.getAllAcceptedAppointmentManagement = catchAsyncError(
     }
   }
 );
+
+//Check available appointment of a user after scanning
+exports.checkAppointment = catchAsyncError(async (req, res, next) => {
+  const hospitalId = req.user._id;
+  const userId = req.params.u_id;
+  const user = await User.findById(userId).populate(
+    "appointments.acpt_appointment",
+    "hospital_id"
+  );
+  if (!user) {
+    return next(new ErrorHandler("No User Found", 400));
+  }
+  const matchingAppointment = user.appointments.find(
+    (apt) =>
+      hospitalId.toString() === apt.acpt_appointment.hospital_id.toString()
+  );
+  if (matchingAppointment) {
+    const appointment = await Appointment.findById(
+      matchingAppointment.acpt_appointment._id
+    )
+      .populate("user_id", "name dob blood_group phone_number gender")
+      .populate("doctor_id", "name")
+      .select("-hospital_id -__v -urgency -req_date")
+      .exec();
+    res.status(200).json({
+      success: true,
+      appointment,
+      message: "Appointment Exist",
+      error: ""
+    });
+  } else {
+    res.status(404).json({
+      success: false,
+      message: "no appointment for this user, Give appointment",
+      error: ""
+    })
+  }
+});
+
+
+// //Book appointment from hospital for the user
+// exports.bookAppointmentByHospital = catchAsyncError(async (req,res, next)=>{
+
+// })

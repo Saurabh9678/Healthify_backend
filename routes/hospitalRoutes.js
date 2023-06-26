@@ -19,6 +19,8 @@ const {
 const {
   resToAppointment,
   getAllAcceptedAppointmentManagement,
+  getAppointmentDetail,
+  checkAppointment,
 } = require("../controllers/appointmentController");
 
 const { isAuthenticatedHospital } = require("../middleware/auth");
@@ -51,6 +53,12 @@ router.route("/resApt/:apt_id").post(isAuthenticatedHospital, resToAppointment);
 router
   .route("/acceptedApt")
   .get(isAuthenticatedHospital, getAllAcceptedAppointmentManagement);
+
+router
+  .route("/aptDetail/:apt_id")
+  .get(isAuthenticatedHospital, getAppointmentDetail);
+
+router.route("/checkApt/:u_id").get(isAuthenticatedHospital, checkAppointment);
 
 // For Postman --> All Details
 router.route("/all-detail/:h_id/postman").get(getHospitalDetailPostman);
