@@ -12,7 +12,10 @@ const {
 
 const { isAuthenticatedUser } = require("../middleware/auth");
 
-const { reqAppointment } = require("../controllers/appointmentController");
+const {
+  reqAppointment,
+  getAllAcceptedAppointment,
+} = require("../controllers/appointmentController");
 
 const {
   searchedHospital,
@@ -37,10 +40,11 @@ router
 
 //appointment controller
 router.route("/reqApt").post(isAuthenticatedUser, reqAppointment);
+router.route("/acceptedApt").get(isAuthenticatedUser, getAllAcceptedAppointment)
 
 //from hospital controller
 router.route("/searchHospital").get(isAuthenticatedUser, searchedHospital);
-router.route("/nearbyHospital").get(isAuthenticatedUser,nearbyHospital);
+router.route("/nearbyHospital").get(isAuthenticatedUser, nearbyHospital);
 router
   .route("/hospital-detail/:h_id")
   .get(isAuthenticatedUser, getHospitalDetailForUser);
