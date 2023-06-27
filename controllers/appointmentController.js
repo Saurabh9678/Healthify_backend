@@ -229,6 +229,7 @@ exports.checkAppointment = catchAsyncError(async (req, res, next) => {
   } else {
     res.status(404).json({
       success: false,
+      appointment: null,
       message: "no appointment for this user, Give appointment",
       error: "",
     });
