@@ -117,13 +117,21 @@ exports.getAllNewAppointments = catchAsyncError(async (req, res, next) => {
       };
     })
   );
-
-  res.status(200).json({
-    success: true,
-    appointments: appointments,
-    message: "Success",
-    error: "",
-  });
+  if(appointments.length===0){
+    res.status(200).json({
+      success:true,
+      message: "No new appointments available",
+      error:""
+    })
+  }else{
+    res.status(200).json({
+      success: true,
+      appointments: appointments,
+      message: "Success",
+      error: "",
+    });
+  }
+  
 });
 
 // FOR USER CONTROLLERS
@@ -194,7 +202,7 @@ exports.nearbyHospital = catchAsyncError(async (req, res, next) => {
   longitude = parseFloat(longitude);
 
   // Calculate the difference between the latitude and longitude coordinates for 20km  square area
-  const distanceDiff = 0.20143519329187;
+  const distanceDiff = 0.90143519329187;
 
   // Calculate the left, right, top, and bottom coordinates of the square area for the search
   const leftCord = longitude - distanceDiff,
