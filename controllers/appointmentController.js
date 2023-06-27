@@ -227,7 +227,7 @@ exports.checkAppointment = catchAsyncError(async (req, res, next) => {
       error: "",
     });
   } else {
-    res.status(404).json({
+    res.status(200).json({
       success: false,
       appointment: {
         _id: "",
