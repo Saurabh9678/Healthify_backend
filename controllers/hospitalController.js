@@ -232,6 +232,7 @@ exports.nearbyHospital = catchAsyncError(async (req, res, next) => {
       _id: 1,
       name: 1,
       address: 1,
+      contact_number: 1
     }
   );
 
